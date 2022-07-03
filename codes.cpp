@@ -189,34 +189,6 @@ int main(){
 	
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 —---------------------------------###############################----------------------------------------
 
 //cycle in undirected graph
@@ -275,36 +247,6 @@ int main()
     cout<<hasCycle(visited)<<endl;
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 —---------------------------------###############################----------------------------------------
 //Bipartite graph
 #include<iostream>
@@ -392,51 +334,6 @@ public:
 };
 
 
-
-—---------------------------------###############################----------------------------------------
-//burst balloon
-#include <iostream>
-#include <bits/stdc++.h>
-using namespace std;
-
-int main()
-{
-    int n;
-    cin>>n;
-    int arr[n+2];
-    arr[0]=1;
-    arr[n+1]=1;
-    for(int i=1; i<=n;i++){
-        cin>>arr[i];
-    }
-    
-    int dp[n+2][n+2];
-    for(int i=0; i<n+2; i++){
-        for(int j=0; j<n+2; j++){
-            dp[i][j]=0;
-        }
-    }
-    
-    for(int win=1; win<=n; win++){
-        for(int left=1; left<=n-win+1; left++){
-            int right = left+win-1;
-            for(int i=left; i<=right; i++){
-                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
-            }
-        }
-    }
-    cout<<dp[1][n];
-
-    return 0;
-}
-
-
-
-
-
-
-
-
 —---------------------------------###############################----------------------------------------
 //802. Find Eventual Safe States
 class Solution {
@@ -467,20 +364,6 @@ public:
     }
     
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 —---------------------------------###############################----------------------------------------
 //Fishermen 
 #include <iostream>
@@ -523,5 +406,42 @@ int main()
     return 0;
 }
 
+
+—---------------------------------###############################----------------------------------------
+//burst balloon
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin>>n;
+    int arr[n+2];
+    arr[0]=1;
+    arr[n+1]=1;
+    for(int i=1; i<=n;i++){
+        cin>>arr[i];
+    }
+    
+    int dp[n+2][n+2];
+    for(int i=0; i<n+2; i++){
+        for(int j=0; j<n+2; j++){
+            dp[i][j]=0;
+        }
+    }
+    
+    for(int win=1; win<=n; win++){
+        for(int left=1; left<=n-win+1; left++){
+            int right = left+win-1;
+            for(int i=left; i<=right; i++){
+                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
+            }
+        }
+    }
+    cout<<dp[1][n];
+
+    return 0;
+}
 
 
