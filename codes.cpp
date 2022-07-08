@@ -95,7 +95,7 @@ int w[35][5];
 int visited[35];
 
 int dist(int sx, int sy,int ex, int ey){
-    return abs(sx-ex)+abs(sy-ey);
+    return abs(sx-ey)+abs(sy-ey);
 }
 
 void optimalPath(int sx,int sy,int ex,int ey,int val){
@@ -189,6 +189,34 @@ int main(){
 	
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 —---------------------------------###############################----------------------------------------
 
 //cycle in undirected graph
@@ -247,50 +275,124 @@ int main()
     cout<<hasCycle(visited)<<endl;
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 —---------------------------------###############################----------------------------------------
 //Bipartite graph
-#include<iostream>
-#include<bits/stdc++.h>
+#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
-int arr[100][100]={0};
-int n;
-bool isBipartite(int node, int color[]){
-    bool flag=true;
-    for(int i=0; i<n; i++){
-        if(arr[node][i]==1){
-            if(color[i]==-1){
-                color[i]=1-color[node];
-                flag=flag&isBipartite(i,color);
-            }
-            else if(color[node]==color[i]){
+int arr[100][100],n;
+
+bool isBipartite(int x,int* color){
+    color[x]=0;
+    queue<int>q;
+    q.push(x);
+    
+    while(!q.empty()){
+        int x=q.front();
+        q.pop();
+        if(arr[x][x]==1){
+            return false;
+        }
+        for(int i=0; i<n; i++){
+            if(arr[x][i]==1 && color[i]==-1){
+                color[i]=1-color[x];
+                q.push(i);
+            }else if(arr[x][i]==1 && color[i]==color[x]){
                 return false;
             }
         }
     }
-    return flag;
+    return true;
 }
+bool checkBipartite(int* color){
+    for(int i=0; i<n; i++){
+        if(color[i]==-1){
+            if(isBipartite(i,color)==false){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 int main()
 {
     cin>>n;
     int color[n];
-    for(int i=0;i<n;i++){
+    for(int i=0; i<n; i++){
         color[i]=-1;
-        for(int j=0;j<n;j++){
+        for(int j=0; j<n; j++){
             cin>>arr[i][j];
         }
     }
-    for(int i=0;i<n;i++){
-        if(color[i]==-1){
-            color[i]=0;
-            if(!isBipartite(i,color)){
-                cout<<"Imp";
-                return 0;
-            }
-        }
-    }
-    cout<<"Yes";
+
+    checkBipartite(color)?cout<<"Yes":cout<<"No";
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 —---------------------------------###############################----------------------------------------
 //2316. Count Unreachable Pairs of Nodes in an Undirected Graph
 class Solution {
@@ -334,6 +436,51 @@ public:
 };
 
 
+
+—---------------------------------###############################----------------------------------------
+//burst balloon
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin>>n;
+    int arr[n+2];
+    arr[0]=1;
+    arr[n+1]=1;
+    for(int i=1; i<=n;i++){
+        cin>>arr[i];
+    }
+    
+    int dp[n+2][n+2];
+    for(int i=0; i<n+2; i++){
+        for(int j=0; j<n+2; j++){
+            dp[i][j]=0;
+        }
+    }
+    
+    for(int win=1; win<=n; win++){
+        for(int left=1; left<=n-win+1; left++){
+            int right = left+win-1;
+            for(int i=left; i<=right; i++){
+                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
+            }
+        }
+    }
+    cout<<dp[1][n];
+
+    return 0;
+}
+
+
+
+
+
+
+
+
 —---------------------------------###############################----------------------------------------
 //802. Find Eventual Safe States
 class Solution {
@@ -364,6 +511,20 @@ public:
     }
     
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 —---------------------------------###############################----------------------------------------
 //Fishermen 
 #include <iostream>
@@ -406,42 +567,5 @@ int main()
     return 0;
 }
 
-
-—---------------------------------###############################----------------------------------------
-//burst balloon
-#include <iostream>
-#include <bits/stdc++.h>
-using namespace std;
-
-int main()
-{
-    int n;
-    cin>>n;
-    int arr[n+2];
-    arr[0]=1;
-    arr[n+1]=1;
-    for(int i=1; i<=n;i++){
-        cin>>arr[i];
-    }
-    
-    int dp[n+2][n+2];
-    for(int i=0; i<n+2; i++){
-        for(int j=0; j<n+2; j++){
-            dp[i][j]=0;
-        }
-    }
-    
-    for(int win=1; win<=n; win++){
-        for(int left=1; left<=n-win+1; left++){
-            int right = left+win-1;
-            for(int i=left; i<=right; i++){
-                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
-            }
-        }
-    }
-    cout<<dp[1][n];
-
-    return 0;
-}
 
 
