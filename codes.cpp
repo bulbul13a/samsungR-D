@@ -474,6 +474,44 @@ int main()
     return 0;
 }
 
+//failed version
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int t,n;
+    cin>>t;
+    n=t+2;
+    int nums[n];
+    nums[0]=1;
+    nums[n-1]=1;
+    for(int i=1; i<=t; i++){
+        cin>>nums[i];
+    }
+    int dp[n][n];
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            dp[i][j]=0;
+        }
+    }
+    for(int win=2; win<n; win++){
+        for(int left=0; left<n-win; left++){
+            int right = left+win;
+            for(int i=left+1; i<right; i++){
+                if(left==0 && right==n-1){
+                    dp[left][right]=max(nums[left]*nums[i]*nums[right]+dp[left][i]+dp[i][right], dp[left][right]);
+                }else{
+                    dp[left][right]=max(nums[left]*nums[right]+dp[left][i]+dp[i][right],dp[left][right]);
+                }
+            }
+        }
+    }
+
+    cout<<dp[0][n-1];
+    return 0;
+}
 
 
 
