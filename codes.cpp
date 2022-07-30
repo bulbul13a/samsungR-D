@@ -276,6 +276,50 @@ int main()
     return 0;
 }
 
+// and print
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+int arr[100][100],n;
+
+bool findCycle(bool* visited,int src,int parent,int& prev){
+    visited[src]=true;
+    for(int i=0; i<n; i++){
+        if(arr[src][i] && !visited[i]){
+            if(findCycle(visited,i,src,prev)){
+                if(src==prev){
+                    cout<<src<<" ";
+                    prev=-1;
+                }else if(prev!=-1){
+                    cout<<src<<" ";
+                }
+                return true;
+            }
+        }else if(arr[src][i] && parent!=i && visited[i]){
+            cout<<src<<" ";
+            prev=1;
+            return true;
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    int m;
+    cin>>n>>m;
+    memset(arr,0,sizeof(arr));
+    int x,y;
+    while(m--){
+        cin>>x>>y;
+        arr[x][y]=1;
+        arr[y][x]=1;
+    }
+    bool visited[n]={false};
+    int prev=-1;
+    findCycle(visited,0,-1,prev);
+    return 0;
+}
 
 
 
