@@ -1,21 +1,353 @@
-//Mr. Lee
-#include<iostream>
+//Bipartite graph
+#include <iostream>
 #include<bits/stdc++.h>
 using namespace std;
-int arr[20][20];
-int n,res;
+int arr[100][100],n;
 
-void optimalPath(bool* visited, int curr, int node, int val){
-    if (node == n-1){
-        if(arr[curr][0]!=0){
-            res=min(res, val+arr[curr][0]);
+bool bfs(int src, int* color){
+    color[src]=1;
+    queue<int>q;
+    q.push(src);
+    while(!q.empty()){
+        int x=q.front();
+        q.pop();
+        for(int i=0; i<n; i++){
+            if(arr[src][i]){
+                if(color[i]==-1){
+                    color[i]=1-color[x];
+                    q.push(i);
+                }
+                else if(color[i]==color[src]){
+                    return false;
+                }
+            }
         }
-        return;
+    }
+    return true;
+}
+
+bool isBipartite(int* color){
+    for(int i=0; i<n; i++){
+        if(color[i]==-1){
+            if(bfs(i,color)==false){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main()
+{
+    int m;
+    cin>>n>>m;
+    int color[n];
+    for(int i=0; i<n; i++){
+        color[i]=-1;
+        for(int j=0; j<n; j++){
+            arr[i][j]=0;
+        }
+    }
+    int x,y;
+    for(int i=0; i<m; i++){
+        cin>>x>>y;
+        arr[x][y]=1;
+    }
+    isBipartite(color)? cout<<"Of course": cout<<"Not";
+    return 0;
+}
+—---------------------------------###############################----------------------------------------
+//Detect and print cycle in graph
+//Undirected one
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+int arr[100][100],n;
+
+bool findCycle(bool* visited, int src, int parent, int& prev){
+    visited[src]=true;
+    for(int i=0; i<n; i++){
+        if(arr[src][i] && !visited[i]){
+            if(findCycle(visited,i,src,prev)){
+                if(src==prev){
+                    cout<<src<<" ";
+                    prev=-1;
+                }else if(prev!=-1){
+                    cout<<src<<" ";
+                }
+                return true;
+            }
+        }else if(arr[src][i] && parent!=i && visited[i]){
+                cout<<src<<" ";
+                prev=i;
+                return true;
+        }
+    }
+    return false;
+}
+
+bool checkCycle(bool* visited){
+    int prev=-1;
+    for(int i=0; i<n; i++){
+        if(!visited[i] && findCycle(visited,i,-1,prev)){
+            return true;
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    int m;
+    cin>>n>>m;
+    bool visited[n]={false};
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            arr[i][j]=0;
+        }
+    }
+    int x,y;
+    for(int i=0; i<m; i++){
+        cin>>x>>y;
+        arr[x][y]=1;
+        arr[y][x]=1;
+    }
+    checkCycle(visited)? cout<<"" :cout<<"No cycle";
+    return 0;
+}
+
+//Directed one
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+int arr[100][100],n;
+
+bool findCycle(bool* visited, bool* inloop, int src, int& prev){
+    visited[src]=true;
+    inloop[src]=true;
+    for(int i=0; i<n; i++){
+        if(arr[src][i]){
+            if(!visited[i]){
+                if(findCycle(visited,inloop,i,prev)){
+                    if(i==prev){
+                        cout<<i<<" ";
+                        prev=-1;
+                    }else if(prev!=-1){
+                        cout<<i<<" ";
+                    }
+                    return true;
+                }
+            }else if(inloop[i]){
+                prev=i;
+                return true;
+            }
+        }
+    }
+    inloop[src]=false;
+    return false;
+}
+
+bool checkCycle(bool* visited){
+    int prev=-1;
+    bool inloop[n]={false};
+
+    for(int i=0; i<n; i++){
+        if(!visited[i] && findCycle(visited,inloop,i,prev)){
+            return true;
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    int m;
+    cin>>n>>m;
+    bool visited[n]={false};
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            arr[i][j]=0;
+        }
+    }
+    int x,y;
+    for(int i=0; i<m; i++){
+        cin>>x>>y;
+        arr[x][y]=1; 
+    }
+    checkCycle(visited)? cout<<"" :cout<<"No cycle";
+    return 0;
+}
+—---------------------------------###############################----------------------------------------
+//Balloons Burst 1
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int n;
+    cin>>n;
+    int arr[n+2];
+    arr[0]=1;
+    arr[n+1]=1;
+    for(int i=1; i<=n; i++){
+        cin>>arr[i];
+    }
+    int dp[n+2][n+2];
+    for(int i=0; i<n+2; i++){
+        for(int j=0; j<n+2; j++){
+            dp[i][j]=0;
+        }
+    }
+    for(int win=1; win<=n; win++){
+        for(int left=1; left<=n-win+1; left++){
+            int right=left+win-1;
+            for(int i=left; i<=right; i++){
+                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
+            }
+        }
+    }
+    cout<<dp[1][n];
+    return 0;
+}
+
+//Balloons Burst 2
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int t,n;
+    cin>>t;
+    n=t+2;
+    int nums[n];
+    nums[0]=1;
+    nums[n-1]=1;
+    for(int i=1; i<=t; i++){
+        cin>>nums[i];
+    }
+    int dp[n][n];
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            dp[i][j]=0;
+        }
+    }
+    for(int win=2; win<n; win++){
+        for(int left=0; left<n-win; left++){
+            int right = left+win;
+            for(int i=left+1; i<right; i++){
+                if(left==0 && right==n-1){
+                    dp[left][right]=max(nums[left]*nums[i]*nums[right]+dp[left][i]+dp[i][right], dp[left][right]);
+                }else{
+                    dp[left][right]=max(nums[left]*nums[right]+dp[left][i]+dp[i][right],dp[left][right]);
+                }
+            }
+        }
+    }
+
+    cout<<dp[0][n-1];
+    return 0;
+}
+—---------------------------------###############################----------------------------------------
+//Endoscopy
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+int row,col,x,y,l;
+int arr[1000][1000],visited[1000][1000];
+
+bool valid(int x,int y){
+    return (x>=0 && x<row && y>=0 && y<col);
+}
+bool left(int x,int y){
+    return (arr[x][y]==1 || arr[x][y]==3 || arr[x][y]==6 || arr[x][y]==7);
+}
+bool right(int x,int y){
+    return (arr[x][y]==1 || arr[x][y]==3 || arr[x][y]==4 || arr[x][y]==5);
+}
+bool up(int x,int y){
+    return (arr[x][y]==1 || arr[x][y]==2 || arr[x][y]==4 || arr[x][y]==7);
+}
+bool down(int x,int y){
+    return (arr[x][y]==1 || arr[x][y]==2 || arr[x][y]==6 || arr[x][y]==5);
+}
+int solve(int x,int y,int l){
+    int ans=0;
+    queue<pair<int,int>>q;
+    queue<int>p;
+    q.push({x,y});
+    p.push(l);
+    visited[x][y]=1;
+    while(!q.empty()){
+        pair<int,int>pp=q.front();
+        int x=pp.first;
+        int y=pp.second;
+        int l=p.front();
+        q.pop();
+        p.pop();
+        if(l==0)continue;
+        ans++;
+        if(valid(x,y-1) && left(x,y) && right(x,y-1) && visited[x][y-1]==0){
+            q.push({x,y-1});
+            p.push(l-1);
+            visited[x][y-1]=1;
+        }
+        if(valid(x,y+1) && right(x,y) && left(x,y+1) && visited[x][y+1]==0){
+            q.push({x,y+1});
+            p.push(l-1);
+            visited[x][y+1]=1;
+        }
+        if(valid(x-1,y) && up(x,y) && down(x-1,y) && visited[x-1][y]==0){
+            q.push({x-1,y});
+            p.push(l-1);
+            visited[x-1][y]=1;
+        }
+        if(valid(x+1,y) && down(x,y) && up(x+1,y) && visited[x+1][y]==0){
+            q.push({x+1,y});
+            p.push(l-1);
+            visited[x+1][y]=1;
+        }
+    }
+    return ans;
+}
+int main()
+{
+    int t;
+    cin>>t;
+    while(t--){
+        cin>>row>>col>>x>>y>>l;
+        for(int i=0; i<row; i++){
+            for(int j=0; j<col; j++){
+                cin>>arr[i][j];
+                visited[i][j]=0;
+            }
+        }
+        if (arr[x][y]>0){
+            cout<<solve(x,y,l)<<endl;
+        }else{
+            cout<<0<<endl;
+        }
+    }
+    return 0;
+}
+—---------------------------------###############################----------------------------------------
+//Mr. Lee
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+int arr[100][100],n,ans;
+
+bool optimalPath(bool* visited,int src, int node, int val){
+    if(node==n-1){
+        if(arr[src][0]!=0){
+            ans=min(ans,val+arr[src][0]);
+        }
     }
     for(int i=0; i<n; i++){
-        if(!visited[i]&&arr[curr][i]!=0){
+        if(arr[src][i]!=0 && !visited[i]){
             visited[i]=true;
-            optimalPath(visited, i, node+1,val+arr[curr][i]);
+            optimalPath(visited, i, node+1,val+arr[src][i]);
             visited[i]=false;
         }
     }
@@ -25,68 +357,129 @@ int main()
 {
     int t;
     cin>>t;
-
-    for(int i=0; i<t;i++){
+    while(t--){
         cin>>n;
-        res = INT_MAX;
-        bool visited[n]={false};
-
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++){
                 cin>>arr[i][j];
             }
         }
+        ans=INT_MAX;
+        bool visited[n]={false};
         visited[0]=true;
         optimalPath(visited,0,0,0);
-        res != INT_MAX ? cout<<endl<<"Test #"<<i+1<<" : "<<res<<endl : cout<<"-1"<<endl;
+        if(ans!=INT_MAX){
+            cout<< ans <<endl;
+        }else{
+            cout<<-1<<endl;
+        }
     }
+
     return 0;
 }
 —---------------------------------###############################----------------------------------------
 //Mr. Kim
-#include<iostream>
-#include<climits>
+#include <iostream>
+#include<bits/stdc++.h>
 using namespace std;
-int x[20],y[20],n,ans;
-
-int dist(int i, int j){//Calc dist between 2 points
-    int x1 = x[i], x2 = x[j];
-    int y1 = y[i], y2 = y[j];
-    
-    return (abs(x1-x2) + abs(y1-y2));
+int x[20],y[20];
+int ans, n;
+int dist(int i,int j){
+    int x1=x[i],x2=x[j];
+    int y1=y[i],y2=y[j];
+    return abs(x1-x2)+abs(y1-y2);
 }
+void optimalPath(bool* visited,int src,int node,int val){
+    if(n==node){
+        ans=min(ans,val+dist(src,n+1));
+    }
+    for(int i=1; i<=n; i++){
+        if(!visited[i]){
+            visited[i]=true;
+            optimalPath(visited,i,node+1,val+dist(src,i));
+            visited[i]=false;
+        }
+    }
+}
+int main()
+{
+    int t;
+    cin>>t;
+    for(int j=1; j<=t; j++){
+        cin>>n;
+        cin>>x[n+1]>>y[n+1]>>x[0]>>y[0];
+        for(int i=1; i<=n; i++){
+            cin>>x[i]>>y[i];
+        }
+        bool visited[n+2]={false};
+        ans=INT_MAX;
+        optimalPath(visited,0,0,0);
+        cout<<"#"<<j<<" "<<ans<<endl;
 
-void optimalPath(int x,bool visited[],int nodes,int value){
-	if(n == nodes){//If number of nodes equal n then set value of answer
-		ans = min(ans,value + dist(x,n+1));
-	}
-	for(int i=1;i<=n;i++){
-		if(!visited[i]){
-			visited[i] = true;
-			optimalPath(i,visited,nodes+1,value + dist(x,i));//Dfs call
-			visited[i] = false;
-		}
-	}
+    }
+    return 0;
+}
+—---------------------------------###############################----------------------------------------
+//Research Team
+—---------------------------------###############################----------------------------------------
+//Spaceship//Bomb explosion
+#include<iostream>
+#include<bits/stdc++.h>
+using namespace std;
+void updateMatrix(int row,char ** matrix){
+    if(row<0){
+        return;
+    }
+    int upLimit=max(0,row-4);
+    for(int i=row;i>=upLimit;i--){
+        for(int j=0;j<=4;j++){
+            if(matrix[i][j]=='2'){
+                matrix[i][j]='0';
+            }
+        }
+    }
+}
+int findMaxPoints(int row,int col,int bombs,char ** matrix){
+    if(row<=0 || col<0 || col>=5){
+        return 0;
+    }
+    int answer=0;
+    if(row>0 && matrix[row-1][col]!='2'){
+        answer=max(answer,(matrix[row-1][col]=='1'?1:0)+findMaxPoints(row-1,col,bombs,matrix));
+    }
+    if(col>0 && row>0 && matrix[row-1][col-1]!='2'){
+        answer=max(answer,(matrix[row-1][col-1]=='1'?1:0)+findMaxPoints(row-1,col-1,bombs,matrix));
+    }
+    if(col<4 && row>0 && matrix[row-1][col+1]!='2'){
+        answer=max(answer,(matrix[row-1][col+1]=='1'?1:0)+findMaxPoints(row-1,col+1,bombs,matrix));
+    }
+
+    if(answer==0 && bombs>0){
+        updateMatrix(row-1,matrix);
+        answer=findMaxPoints(row,col,bombs-1,matrix);
+    }
+    return answer;
 }
 int main(){
-	int tCases;
-	cin >> tCases;//For testcases
-	for(int i=0;i<tCases;i++){
-		ans=INT_MAX;//Set ans to max value
-		cin >> n;
-		cin >> x[n+1] >> y[n+1] >> x[0] >> y[0];//Input destination and source x,y coordinates
-		for(int i=1;i<=n;i++){//Input drop off location coordinates
-			cin >> x[i] >> y[i];
-		}
-		bool visited[n+2]={false};
-		optimalPath(0,visited,0,0);
-		cout << "#" << i+1 << " " << ans << endl;
-	}
-	return 0;
+    int t, row;
+    cin >> t;
+    int tNo = 0;
+    while(t--){
+        cin >> row;
+        char ** matrix=new char*[row + 2];
+        for(int i=0; i<row; i++){
+            matrix[i]=new char[5];
+            for(int j=0;j<5;j++){
+                cin>>matrix[i][j];
+            }
+        }
+        tNo++;
+        cout<< "#" << tNo << " : " << findMaxPoints(row,2,1,matrix) << endl;
+    }
+    return 0;
 }
-
 —---------------------------------###############################----------------------------------------
-//wormhole
+//Wormhole
 #include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
@@ -130,483 +523,49 @@ int main()
     return 0;
 }
 —---------------------------------###############################----------------------------------------
-//cycle in directed graph
-#include<iostream>
-using namespace std;
-
-int graph[100][100];
-int n;
-
-bool dfs(bool *visited, bool *inloop,int node,int prev){
-	if(!visited[node]){
-	    visited[node] = 1;
-	    inloop[node] = 1;
-        
-        for(int i=0; i<n; i++){
-            if(graph[node][i]){
-                if(!visited[i]&&dfs(visited,inloop,i,node)){
-                    return true;
-                }else if(inloop[i] && i!=prev&&node!=i){
-                    return true;
-                }
-            }
-        }
-	}
-	inloop[node]=0;  
-	return false;			 
-}
-
-bool checkCycle (bool *visited){
-	bool inloop[n] = {false};
-	
-	for(int i=0; i<n; i++)
-	    if( !visited[i] && dfs(visited, inloop,i,-1)){
-	        return true;
-	    }
-
-	return false; 
-}
-
-int main(){
-	// Input nodes
-	cin>>n;
-	for(int i=0;i<n;i++)
-	    for(int j=0;j<n;j++)
-	        graph[i][j]=0;
-	 
-	// Input Edges 
-	int t; 
-	cin>>t;   
-	int x,y;
-	for(int i=0;i<t;i++){
-		cin>>x>>y;
-		graph[x][y]=1;
-	}
-
-	bool visited[n] = {false};
-
-	cout<<checkCycle(visited)<<endl;     
-	
-	return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-—---------------------------------###############################----------------------------------------
-
-//cycle in undirected graph
+//Omnious Number
 #include<iostream>
 #include<bits/stdc++.h>
 using namespace std;
-int arr[100][100];
-int n;
 
-bool dfs(int node,int parent,bool* visited){
-    visited[node]=true;
+int numberOminous(int a, int b, int k, int *delNos, int n){
+    int count = 0;
+    for(int i = a; i <= b; i++){
+        int temp = i;
+        int digitArray[10] = {0};
 
-    for(int i=0; i<n; i++){
-        if(arr[node][i]){
-            if(!visited[i]){
-                if (dfs(i,node, visited)){
-                    return true;
-                }
-            }else if(i!=parent && i!=curr){
-                return true;
-            }
+        while(temp){
+            digitArray[temp%10]++;
+            temp /= 10;
         }
-    }
-    return false;
-}
-
-bool hasCycle(bool* visited){
-    for (int i=0; i<n; i++){
-        if(!visited[i]){
-            if(dfs(i,-1,visited)){
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-int main()
-{
-    cin>>n;
-    for (int i=0; i<n; i++){
-        for (int j=0; j<n; j++){
-            arr[i][j]=0;
-        }
-    }
-    int t;
-    cin>>t;
-    int x,y;
-    for(int i=0; i<t; i++){
-        cin>>x>>y;
-        arr[x][y]=1;
-        arr[y][x]=1;
-    }
-    bool visited[n]={false};
-
-    cout<<hasCycle(visited)<<endl;
-    return 0;
-}
-
-// and print
-#include <iostream>
-#include <bits/stdc++.h>
-using namespace std;
-int arr[100][100],n;
-
-bool findCycle(bool* visited,int src,int parent,int& prev){
-    visited[src]=true;
-    for(int i=0; i<n; i++){
-        if(arr[src][i] && !visited[i]){
-            if(findCycle(visited,i,src,prev)){
-                if(src==prev){
-                    cout<<src<<" ";
-                    prev=-1;
-                }else if(prev!=-1){
-                    cout<<src<<" ";
-                }
-                return true;
-            }
-        }else if(arr[src][i] && parent!=i && visited[i]){
-            cout<<src<<" ";
-            prev=1;
-            return true;
-        }
-    }
-    return false;
-}
-
-int main()
-{
-    int m;
-    cin>>n>>m;
-    memset(arr,0,sizeof(arr));
-    int x,y;
-    while(m--){
-        cin>>x>>y;
-        arr[x][y]=1;
-        arr[y][x]=1;
-    }
-    bool visited[n]={false};
-    int prev=-1;
-    findCycle(visited,0,-1,prev);
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-—---------------------------------###############################----------------------------------------
-//Bipartite graph
-#include <iostream>
-#include <bits/stdc++.h>
-using namespace std;
-int arr[100][100],n;
-
-bool isBipartite(int x,int* color){
-    color[x]=0;
-    queue<int>q;
-    q.push(x);
-    
-    while(!q.empty()){
-        int x=q.front();
-        q.pop();
-        if(arr[x][x]==1){
-            return false;
-        }
+        
+        int rougeK = 0;
         for(int i=0; i<n; i++){
-            if(arr[x][i]==1 && color[i]==-1){
-                color[i]=1-color[x];
-                q.push(i);
-            }else if(arr[x][i]==1 && color[i]==color[x]){
-                return false;
-            }
+            rougeK += digitArray[delNos[i]];
         }
-    }
-    return true;
-}
-bool checkBipartite(int* color){
-    for(int i=0; i<n; i++){
-        if(color[i]==-1){
-            if(isBipartite(i,color)==false){
-                return false;
-            }
+
+        if(rougeK < k){
+            count++;
         }
+
     }
-    return true;
+    return count;
 }
 
-int main()
-{
-    cin>>n;
-    int color[n];
-    for(int i=0; i<n; i++){
-        color[i]=-1;
-        for(int j=0; j<n; j++){
-            cin>>arr[i][j];
-        }
-    }
-
-    checkBipartite(color)?cout<<"Yes":cout<<"No";
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-—---------------------------------###############################----------------------------------------
-//2316. Count Unreachable Pairs of Nodes in an Undirected Graph
-class Solution {
-public:
-    void DFS(int curr,int& ans, vector<vector<int>>&adj, vector<bool>&visited){
-        visited[curr]=true;
-        ans++;
-        for(auto i: adj[curr]){
-            if(!visited[i]){
-                DFS(i,ans,adj,visited);
-            }
-        }
-    }
-    long long countPairs(int n, vector<vector<int>>& edges) {
-        vector<vector<int>>adj(n);
-        vector<bool>visited(n,false);
-        
-        for(int i=0; i<edges.size(); i++){
-            adj[edges[i][0]].push_back(edges[i][1]);
-            adj[edges[i][1]].push_back(edges[i][0]);
-        }
-        
-        vector<int>res;
-        int count = 0;
-        
-        for(int i=0; i<n; i++){
-            if(!visited[i]){
-                int ans=0;
-                DFS(i,ans,adj,visited);
-                res.push_back(ans);
-                count++;
-            }
-        }
-        long long d=0;
-        for (auto i: res){
-            d+=(long long)(i)*(long long)(n-i);
-        }
-        return d/2;
-        
-    }
-};
-
-
-
-—---------------------------------###############################----------------------------------------
-//burst balloon
-#include <iostream>
-#include <bits/stdc++.h>
-using namespace std;
-
-int main()
-{
+int main() {
+    int a, b, k;
+    cin >> a >> b >> k;
     int n;
-    cin>>n;
-    int arr[n+2];
-    arr[0]=1;
-    arr[n+1]=1;
-    for(int i=1; i<=n;i++){
-        cin>>arr[i];
-    }
-    
-    int dp[n+2][n+2];
-    for(int i=0; i<n+2; i++){
-        for(int j=0; j<n+2; j++){
-            dp[i][j]=0;
-        }
-    }
-    
-    for(int win=1; win<=n; win++){
-        for(int left=1; left<=n-win+1; left++){
-            int right = left+win-1;
-            for(int i=left; i<=right; i++){
-                dp[left][right]=max(dp[left][right],arr[left-1]*arr[i]*arr[right+1]+dp[left][i-1]+dp[i+1][right]);
-            }
-        }
-    }
-    cout<<dp[1][n];
-
-    return 0;
-}
-
-//failed version
-#include <iostream>
-#include<bits/stdc++.h>
-using namespace std;
-
-int main()
-{
-    int t,n;
-    cin>>t;
-    n=t+2;
-    int nums[n];
-    nums[0]=1;
-    nums[n-1]=1;
-    for(int i=1; i<=t; i++){
-        cin>>nums[i];
-    }
-    int dp[n][n];
+    cin >> n;
+    int *delNos = new int[n];
     for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            dp[i][j]=0;
-        }
-    }
-    for(int win=2; win<n; win++){
-        for(int left=0; left<n-win; left++){
-            int right = left+win;
-            for(int i=left+1; i<right; i++){
-                if(left==0 && right==n-1){
-                    dp[left][right]=max(nums[left]*nums[i]*nums[right]+dp[left][i]+dp[i][right], dp[left][right]);
-                }else{
-                    dp[left][right]=max(nums[left]*nums[right]+dp[left][i]+dp[i][right],dp[left][right]);
-                }
-            }
-        }
+        cin >> delNos[i];
     }
 
-    cout<<dp[0][n-1];
+    cout << numberOminous(a, b, k, delNos, n) << "\n";
+
     return 0;
 }
-
-
-
-
-
-
-
-—---------------------------------###############################----------------------------------------
-//802. Find Eventual Safe States
-class Solution {
-public:
-    bool cycle(vector<vector<int>>& adj, vector<int> &vis, vector<int> &rec,int x){
-        vis[x]=1;
-        rec[x]=1;
-        for(auto i: adj[x]){
-            if(vis[i]==0 && cycle(adj,vis,rec,i)){
-                return true;
-            }else if(rec[i]){
-                return true;
-            }
-        }
-        return rec[x]=0;
-    }
-    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
-        int n=graph.size();
-        vector<int>vis(n,0);
-        vector<int>rec(n,0);
-        vector<int>res;
-        for(int i=0; i<n; i++){
-            if(cycle(graph,vis,rec,i)==0){
-                res.push_back(i);
-            }
-        }
-        return res;
-    }
-    
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 —---------------------------------###############################----------------------------------------
 //Fishermen 
 #include <iostream>
@@ -648,6 +607,75 @@ int main()
 
     return 0;
 }
-
-
-
+—---------------------------------###############################----------------------------------------
+//2316. Count Unreachable Pairs of Nodes in an Undirected Graph
+class Solution {
+public:
+    void DFS(int curr,int& ans, vector<vector<int>>&adj, vector<bool>&visited){
+        visited[curr]=true;
+        ans++;
+        for(auto i: adj[curr]){
+            if(!visited[i]){
+                DFS(i,ans,adj,visited);
+            }
+        }
+    }
+    long long countPairs(int n, vector<vector<int>>& edges) {
+        vector<vector<int>>adj(n);
+        vector<bool>visited(n,false);
+        
+        for(int i=0; i<edges.size(); i++){
+            adj[edges[i][0]].push_back(edges[i][1]);
+            adj[edges[i][1]].push_back(edges[i][0]);
+        }
+        
+        vector<int>res;
+        int count = 0;
+        
+        for(int i=0; i<n; i++){
+            if(!visited[i]){
+                int ans=0;
+                DFS(i,ans,adj,visited);
+                res.push_back(ans);
+                count++;
+            }
+        }
+        long long d=0;
+        for (auto i: res){
+            d+=(long long)(i)*(long long)(n-i);
+        }
+        return d/2;
+        
+    }
+};
+—---------------------------------###############################----------------------------------------
+//802. Find Eventual Safe States
+class Solution {
+public:
+    bool cycle(vector<vector<int>>& adj, vector<int> &vis, vector<int> &rec,int x){
+        vis[x]=1;
+        rec[x]=1;
+        for(auto i: adj[x]){
+            if(vis[i]==0 && cycle(adj,vis,rec,i)){
+                return true;
+            }else if(rec[i]){
+                return true;
+            }
+        }
+        return rec[x]=0;
+    }
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n=graph.size();
+        vector<int>vis(n,0);
+        vector<int>rec(n,0);
+        vector<int>res;
+        for(int i=0; i<n; i++){
+            if(cycle(graph,vis,rec,i)==0){
+                res.push_back(i);
+            }
+        }
+        return res;
+    }
+    
+};
+—---------------------------------###############################----------------------------------------
