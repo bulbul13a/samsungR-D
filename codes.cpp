@@ -17,7 +17,7 @@ bool bfs(int src, int* color){
                     color[i]=1-color[x];
                     q.push(i);
                 }
-                else if(color[i]==color[src]){
+                else if(color[i]==color[x]){
                     return false;
                 }
             }
