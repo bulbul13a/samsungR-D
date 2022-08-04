@@ -724,3 +724,66 @@ int main()
     cout<<ans;
     return 0;
 }
+—---------------------------------###############################----------------------------------------
+//Rock Climbing
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int n,m,l=0,f=0;
+int arr[15][15],visited[15][15];
+
+void minDiff(int i,int j){
+    if(i<0 || j<0 || i>=n || j>=m){
+        return;
+    }
+    if(visited[i][j]){
+        return;
+    }
+    visited[i][j]=1;
+    if(arr[i][j]==3){
+        f=1;
+        return;
+    }
+    if(j+1<m && (arr[i][j+1]==1 || arr[i][j+1]==3) && visited[i][j+1]==0){
+        minDiff(i,j+1);
+    }
+    if(j-1>0 && (arr[i][j-1]==1 || arr[i][j-1]==3) && visited[i][j-1]==0){
+        minDiff(i,j-1);
+    }
+    for(int h=1; h<=l; h++){
+        if(h<=l && i-h>=0 && (arr[i-h][j]==1||arr[i-h][j]==3) && visited[i-h][j]==0){
+            minDiff(i-h,j);
+        }
+    }
+    for(int h=1; h<=l; h++){
+        if(h<=l && i+h<n && (arr[i+h][j]==1 || arr[i+h][j]==3) && visited[i+h][j]==0){
+            minDiff(i+h,j);
+        }
+    }
+
+}
+
+int main()
+{
+    cin>>n>>m;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            cin>>arr[i][j];
+        }
+    }
+    for(l=0; l<n; l++){
+        for(int i=0; i<15; i++){
+            for(int j=0; j<15; j++){
+                visited[i][j]=0;
+            }
+        }
+        f=0;
+        minDiff(n-1,0);
+        if(f){
+            cout<<l;
+            break;
+        }
+    }
+    return 0;
+}
