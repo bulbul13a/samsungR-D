@@ -12,7 +12,7 @@ bool bfs(int src, int* color){
         int x=q.front();
         q.pop();
         for(int i=0; i<n; i++){
-            if(arr[src][i]){
+            if(arr[x][i]){
                 if(color[i]==-1){
                     color[i]=1-color[x];
                     q.push(i);
