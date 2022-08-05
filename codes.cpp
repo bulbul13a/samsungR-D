@@ -748,7 +748,7 @@ void minDiff(int i,int j){
     if(j+1<m && (arr[i][j+1]==1 || arr[i][j+1]==3) && visited[i][j+1]==0){
         minDiff(i,j+1);
     }
-    if(j-1>0 && (arr[i][j-1]==1 || arr[i][j-1]==3) && visited[i][j-1]==0){
+    if(j-1>=0 && (arr[i][j-1]==1 || arr[i][j-1]==3) && visited[i][j-1]==0){
         minDiff(i,j-1);
     }
     for(int h=1; h<=l; h++){
