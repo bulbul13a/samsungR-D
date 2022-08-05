@@ -480,7 +480,7 @@ int w[35][5];
 int visited[35];
 
 int dist(int sx, int sy,int ex, int ey){
-    return abs(sx-ey)+abs(sy-ey);
+    return abs(sx-ex)+abs(sy-ey);
 }
 
 void optimalPath(int sx,int sy,int ex,int ey,int val){
