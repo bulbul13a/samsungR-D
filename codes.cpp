@@ -787,3 +787,41 @@ int main()
     }
     return 0;
 }
+//Finding in a infinite sequence
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+#define small 1000000
+#define large 1000000000000000
+long long ans,a,b,c,k;
+
+long long val(long long x){
+    return a*x+b*x*floor(log2(x))+c*x*x*x;
+}
+
+int main()
+{
+    a = 2, b = 1, c = 1;
+    k = 12168587437017;
+    
+    long long start = 1, end = small;
+    if(c==0){
+        end=large;
+    }
+    ans=0;
+    
+    while(start<=end){
+        long long mid=(start+end)/2;
+        if(k==val(mid)){
+            ans=mid;
+            break;
+        }
+        else if(val(mid)>k){
+            end=mid-1;
+        }else{
+            start=mid+1;
+        }
+    }
+    cout<<ans;
+    return 0;
+}
